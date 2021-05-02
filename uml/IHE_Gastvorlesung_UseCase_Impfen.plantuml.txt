@@ -1,0 +1,41 @@
+@startuml
+title Hausarzt: Hepatitis-B Impfung
+footer Version 1.3
+skinparam responseMessageBelowArrow true
+
+actor Patient #green
+actor Arzt #red
+participant PIS
+participant MPI
+participant DocumentRegistry
+participant eImpfausweis
+participant Impfcheck
+
+Patient -> Arzt: Hepatitis-B impfen, bitte.
+Arzt -> PIS: Impfcheck ausführen
+PIS -> MPI: PatientID eImfpausweis suchen
+MPI -> MPI: query patients data
+MPI -> PIS: PatientID 09876543231
+
+PIS -> DocumentRegistry: FindDocumentQuery [ITI-18]
+DocumentRegistry-> DocumentRegistry: Filtere Daten
+DocumentRegistry -> PIS: DocumentUUID
+PIS -> eImpfausweis: Retrieve Document [ITI-43]
+eImpfausweis -> eImpfausweis: generate eImpfausweis document
+eImpfausweis -> PIS: eImpfausweis Document
+PIS -> Impfcheck: eImpfausweis Document (pseudonymisiert)
+
+Impfcheck -> Impfcheck: Check for required immunizations
+Impfcheck -> PIS: Impfempfehlung
+
+PIS -> Arzt: Zeige Impfempfehlungen
+Arzt -> Patient: Diskussion
+Patient -> Arzt: Hepatitis-B
+Arzt -> Patient: Appliziert Hepatitis-B Impfung
+Arzt -> PIS: Eintragen der Impfung
+PIS -> eImpfausweis: Impfung im eImpfausweis eintragen
+eImpfausweis -> PIS: OK, eingetragen
+PIS -> Arzt: Alles erledigt
+Arzt -> Patient: Ihr Impfausweis ist nachgetragen.
+
+@enduml
